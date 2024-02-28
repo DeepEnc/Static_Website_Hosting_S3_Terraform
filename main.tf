@@ -2,7 +2,7 @@ resource "aws_s3_bucket" "s3_bucket"{
     bucket = var.bucket_name
     tags = var.common_tags
 }
-resource "aws_s3_bucket_website_configuration" "bucket_website configuration" {
+resource "aws_s3_bucket_website_configuration" "bucket_website_configuration" {
     bucket = aws_s3_bucket.s3_bucket.id
 
     index_document {
@@ -10,7 +10,7 @@ resource "aws_s3_bucket_website_configuration" "bucket_website configuration" {
     }
 
     error_document {
-      key = "index.html"
+      key = "index.html"    # use an error html page 
     }
 }
 
@@ -39,8 +39,8 @@ resource "aws_s3_bucket_public_access_block" "bucket_access_block" {
 
 resource "aws_s3_bucket_acl" "bucket_acl" {
   depends_on = [
-    aws_s3_bucket_ownership_controls.s3_bucket,
-    aws_s3_bucket_public_access_block.s3_bucket,
+    aws_s3_bucket_ownership_controls.bucket_ownership_control,
+    aws_s3_bucket_public_access_block.bucket_ownership_control,
   ]
 
   bucket = aws_s3_bucket.s3_bucket.id
@@ -67,7 +67,5 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 output "website_url" {
-  value = "http://${aws_s3_bucket.s3_bucket}.s3-website.${var.region}.amazonaws.com"
+  value = "http://${aws_s3_bucket.s3_bucket.bucket}.s3-website.${var.region}.amazonaws.com"
 }
-
-
